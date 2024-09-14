@@ -1,26 +1,15 @@
 # 4100901-Final_Exam
-Please fork this repo, then clone it into your computer, and place your work for the Final exam here.
-
-## Criterio de Evaluación 
-
-* Funcionalidad: 60% (valor equivalente para cada requerimiento)
-* Arquitectura de codigo: 10% (uso adecuado de interrupciones y librerias)
-* Optimizaciones: 10% (de consumo de energia y tamaño de memoria)
-* Repositorio: 10% (commits entendibles que describan los cambios realizados)
-* Documentación: 10% (en código y readme del repositorio)
-
-
-## Instrucciones
+This parcial was made by Gabriela Romo Mendoza and David Santiago Perez. 
 
 Implemente un **sistema de operaciones aritmeticas** según los requerimientos descritos a continuacion.
 
 ### Requerimientos del sistema:
 
 #### No funcionales:
-1. Tener un LED para indicar el estatus del sistema.
+1. Tener un LED para indicar el estatus del sistema (LD2) y una libreria (LED).
 2. Tener un teclado hexadecimal para ingresar un valor al sistema en dígitos.
 3. Tener un puerto de depuración con el PC (USART2 @256000 baudios).
-4. Tener un display OLED para mostrar la informacion del sistema.
+4. Tener un display OLED (SSD1306) para mostrar la informacion del sistema.
 
 #### Funcionales:
 5. El teclado hexadecimal debe recibir un valor de hasta 4 dígitos.
