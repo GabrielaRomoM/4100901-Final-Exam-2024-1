@@ -223,7 +223,14 @@ int main(void)
   MX_USART2_UART_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
-
+  LED_Init(LD2_GPIO_Port, LD2_Pin);  // Initialize the LED
+  ssd1306_Init();                    // Initialize OLED display
+  HAL_UART_Receive_IT(&huart2, (uint8_t*)usart_value, 1); // Start UART receive interrupt
+  // Clear the display and show initial message
+  ssd1306_Fill(Black);
+  ssd1306_SetCursor(0, 0);
+  ssd1306_WriteString("Enter values:", Font_7x10, White);
+  ssd1306_UpdateScreen();
   /* USER CODE END 2 */
 
   /* Infinite loop */
