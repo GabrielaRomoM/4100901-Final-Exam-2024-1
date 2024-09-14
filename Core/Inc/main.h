@@ -68,28 +68,28 @@ void Error_Handler(void);
 #define LD2_GPIO_Port GPIOA
 #define COL_1_Pin GPIO_PIN_10
 #define COL_1_GPIO_Port GPIOB
+#define COL_1_EXTI_IRQn EXTI15_10_IRQn
 #define COL_4_Pin GPIO_PIN_7
 #define COL_4_GPIO_Port GPIOC
+#define COL_4_EXTI_IRQn EXTI9_5_IRQn
 #define COL_2_Pin GPIO_PIN_8
 #define COL_2_GPIO_Port GPIOA
+#define COL_2_EXTI_IRQn EXTI9_5_IRQn
 #define COL_3_Pin GPIO_PIN_9
 #define COL_3_GPIO_Port GPIOA
+#define COL_3_EXTI_IRQn EXTI9_5_IRQn
 #define ROW_1_Pin GPIO_PIN_10
 #define ROW_1_GPIO_Port GPIOA
-#define ROW_1_EXTI_IRQn EXTI15_10_IRQn
 #define TMS_Pin GPIO_PIN_13
 #define TMS_GPIO_Port GPIOA
 #define TCK_Pin GPIO_PIN_14
 #define TCK_GPIO_Port GPIOA
 #define ROW_2_Pin GPIO_PIN_3
 #define ROW_2_GPIO_Port GPIOB
-#define ROW_2_EXTI_IRQn EXTI3_IRQn
 #define ROW_4_Pin GPIO_PIN_4
 #define ROW_4_GPIO_Port GPIOB
-#define ROW_4_EXTI_IRQn EXTI4_IRQn
 #define ROW_3_Pin GPIO_PIN_5
 #define ROW_3_GPIO_Port GPIOB
-#define ROW_3_EXTI_IRQn EXTI9_5_IRQn
 
 /* USER CODE BEGIN Private defines */
 

@@ -8,11 +8,16 @@
 #ifndef INC_LED_H_
 #define INC_LED_H_
 
-#include "main.h"
+#include <stdint.h>
+#include <main.h>
 
-void LED_Init(void);
-void LED_On(void);
-void LED_Off(void);
-void LED_Toggle(void);
-void LED_SetStatus(int value);
+// LED states
+#define LED_OFF 0
+#define LED_ON 1
+#define LED_BLINK 2
+
+// Function prototypes
+void LED_Init(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin);
+void LED_SetState(uint8_t state);
+void LED_Update(void);
 #endif /* INC_LED_H_ */
