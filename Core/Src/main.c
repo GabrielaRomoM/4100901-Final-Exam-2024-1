@@ -23,6 +23,7 @@
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "ssd1306.h"
 #include "ssd1306_fonts.h"
 #include "led.h"
@@ -107,87 +108,97 @@ void update_display(void)
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
 	 if (huart->Instance == USART2)
-	    {
-	        // Process the received character
-	        if (uart_rx_buffer >= '0' && uart_rx_buffer <= '9' && usart_idx < MAX_USART_LENGTH)
-	        {
-	            usart_value[usart_idx++] = uart_rx_buffer;
-	            usart_value[usart_idx] = '\0'; // Null-terminate the string
-	            printf("Updated usart_value: %s\n", usart_value); // Debug: Show updated string
-	        }
-	        // Handle '#' key to reset USART input
-	        else if (uart_rx_buffer == '#')
-	        {
-	            memset(usart_value, 0, sizeof(usart_value));
-	            usart_idx = 0;
-	            printf("USART Reset\n");
-	        }
-	        else
-	        {
-	            // Debug: Invalid input
-	            printf("Invalid character received: %c\n", uart_rx_buffer);
-	        }
-
-	        // Update the OLED display with the latest values
-	        update_display();
-
-	        // Restart the UART receive interrupt for the next character
-	        HAL_UART_Receive_IT(&huart2, &uart_rx_buffer, 1);
-	    }
+	 {
+		 // Process the received character
+		 if (uart_rx_buffer >= '0' && uart_rx_buffer <= '9' && usart_idx < MAX_USART_LENGTH)
+		 {
+			 usart_value[usart_idx++] = uart_rx_buffer;
+			 usart_value[usart_idx] = '\0'; // Null-terminate the string
+			 printf("Updated usart_value: %s\n", usart_value); // Debug: Show updated string
+			 }
+		 // Handle '#' key to reset USART input
+		 else if (uart_rx_buffer == '#')
+		 {
+			 memset(usart_value, 0, sizeof(usart_value));
+			 usart_idx = 0;
+			 printf("USART Reset\n");
+		 }
+		 else
+		 {
+			 // Debug: Invalid input
+			 printf("Invalid character received: %c\n", uart_rx_buffer);
+		 }
+		 // Update the OLED display with the latest value
+		 update_display();
+		 // Restart the UART receive interrupt for the next character
+		 HAL_UART_Receive_IT(&huart2, &uart_rx_buffer, 1);
+	 }
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-    if (GPIO_Pin == B1_Pin)  // If the button B1 is pressed
+if (GPIO_Pin == B1_Pin)  // If the button B1 is pressed
+{
+    int keypad_int = atoi(keypad_value);  // Convert keypad input to integer
+    int usart_int = atoi(usart_value);    // Convert USART input to integer
+    int sum = keypad_int + usart_int;     // Sum both values
+
+    // Extract the last character from keypad_value and usart_value
+    char last_keypad_char = (keypad_idx > 0) ? keypad_value[keypad_idx - 1] : ' ';
+    char last_usart_char = (usart_idx > 0) ? usart_value[usart_idx - 1] : ' ';
+
+    // Display sum on OLED
+    ssd1306_Fill(Black);
+    ssd1306_SetCursor(0, 0);
+    char display_str[30];
+    sprintf(display_str, "Sum: %d", sum);
+    ssd1306_WriteString(display_str, Font_7x10, White);
+
+    ssd1306_SetCursor(0, 15);
+    sprintf(display_str, "Last Dig Keypad: %c", last_keypad_char);
+    ssd1306_WriteString(display_str, Font_7x10, White);
+
+    ssd1306_SetCursor(0, 30);
+    sprintf(display_str, "Last Dig Usart: %c", last_usart_char);
+    ssd1306_WriteString(display_str, Font_7x10, White);
+    ssd1306_UpdateScreen();
+
+    // Print sum to console
+    printf("Sum: %d\n", sum);
+
+    // LED control
+    if (sum % 2 == 0)  // Check if the sum is even
     {
-        int keypad_int = atoi(keypad_value);  // Convert keypad input to integer
-        int usart_int = atoi(usart_value);    // Convert USART input to integer
-        int sum = keypad_int + usart_int;     // Sum both values
-
-        // Display sum on OLED
-        ssd1306_Fill(Black);
-        ssd1306_SetCursor(0, 0);
-        char sum_str[20];
-        sprintf(sum_str, "Sum: %d", sum);
-        ssd1306_WriteString(sum_str, Font_7x10, White);
-        ssd1306_UpdateScreen();
-
-        // Print sum to console
-        printf("Sum: %d\n", sum);
-
-        // LED control
-        if (sum % 2 == 0)  // Check if the sum is even
-        {
-            LED_SetState(LED_ON);  // Turn on LED
-        }
-        else
-        {
-            LED_SetState(LED_OFF); // Turn off LED
-        }
+        LED_SetState(LED_ON);  // Turn on LED
     }
     else
     {
-        uint8_t key_pressed = keypad_scan(GPIO_Pin);
-        if (key_pressed != 0xFF)
-        {
-            // Handle numeric input for keypad
-            if (key_pressed >= '0' && key_pressed <= '9' && keypad_idx < MAX_KEYPAD_LENGTH)
-            {
-                keypad_value[keypad_idx++] = key_pressed;
-                keypad_value[keypad_idx] = '\0'; // Null-terminate the string
-            }
-            // Handle '*' key to reset keypad input
-            else if (key_pressed == '*')
-            {
-                memset(keypad_value, 0, sizeof(keypad_value));
-                keypad_idx = 0;
-                printf("Keypad Reset\n");
-            }
-
-            // Update the OLED display with the latest values
-            update_display();
-        }
+        LED_SetState(LED_OFF); // Turn off LED
     }
+}
+else
+{
+    uint8_t key_pressed = keypad_scan(GPIO_Pin);
+    if (key_pressed != 0xFF)
+    {
+        // Handle numeric input for keypad
+        if (key_pressed >= '0' && key_pressed <= '9' && keypad_idx < MAX_KEYPAD_LENGTH)
+        {
+            keypad_value[keypad_idx++] = key_pressed;
+            keypad_value[keypad_idx] = '\0'; // Null-terminate the string
+        }
+        // Handle '*' key to reset keypad input
+        else if (key_pressed == '*')
+        {
+            memset(keypad_value, 0, sizeof(keypad_value));
+            keypad_idx = 0;
+            printf("Keypad Reset\n");
+        }
+
+        // Update the OLED display with the latest values
+        update_display();
+    }
+}
 }
 /* USER CODE END 0 */
 
@@ -241,6 +252,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+  }
 }
   /* USER CODE END 3 */
 
